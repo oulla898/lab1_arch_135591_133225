@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPU Performance Calculator</title>
+    <script src="cpu_performance_calculator.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            animation: fadeIn 1s ease-in;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #76ff03;
+            text-shadow: 2px 2px #00c853;
+        }
+
+        label {
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+
+        input[type="number"], input[type="text"], select {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin: 5px 0 20px 0;
+            width: 250px;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        input[type="number"]:focus, input[type="text"]:focus, select:focus {
+            outline: none;
+            background-color: #3e3e3e;
+            box-shadow: 0 0 5px #76ff03;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #76ff03;
+            color: #121212;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #00c853;
+            transform: scale(1.05);
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #3e3e3e;
+        }
+
+        th {
+            background-color: #1e1e1e;
+            color: #76ff03;
+        }
+
+        tr:nth-child(even) {
+            background-color: #2e2e2e;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>CPU Performance Calculator</h1>
+    <label for="numProcessors">Number of Processors:</label>
+    <input type="number" id="numProcessors" name="numProcessors" min="1" required><br>
+
+    <label for="numBenchmarks">Number of Benchmarks:</label>
+    <input type="number" id="numBenchmarks" name="numBenchmarks" min="1" required><br>
+
+    <button onclick="generateTable()">Generate Table</button>
+
+    <div id="inputTable"></div>
+    <div id="output"></div>
+</body>
+</html>
