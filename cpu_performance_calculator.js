@@ -1,149 +1,128 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CPU Performance Calculator</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #121212;
-            color: #ffffff;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+
+function generateTable() {
+    var numProcessors = parseInt(document.getElementById("numProcessors").value);
+    var numBenchmarks = parseInt(document.getElementById("numBenchmarks").value);
+    var table = "<h3>Enter execution times for each processor and benchmark:</h3><table border='1'><tr><th>Benchmark</th>";
+
+    // Create the table header for processor names
+    for (let i = 0; i < numProcessors; i++) {
+        table += "<th><input type='text' id='processor" + i + "' placeholder='Processor " + (i + 1) + "'></th>";
+    }
+    table += "</tr>";
+
+    // Create rows for benchmark names and execution times
+    for (let j = 0; j < numBenchmarks; j++) {
+        table += "<tr><td><input type='text' id='benchmark" + j + "' placeholder='Benchmark " + (j + 1) + "'></td>";
+        for (let i = 0; i < numProcessors; i++) {
+            table += "<td><input type='number' id='time" + i + "_" + j + "' placeholder='Time (sec)'></td>";
+        }
+        table += "</tr>";
+    }
+
+    table += "</table><br><label for='referenceProcessor'>Reference Processor:</label> <select id='referenceProcessor'>";
+    for (let i = 0; i < numProcessors; i++) {
+        table += "<option value='" + i + "'>Processor " + (i + 1) + "</option>";
+    }
+    table += "</select><br><br><button onclick='calculateMeans()'>Calculate</button>";
+
+    document.getElementById("inputTable").innerHTML = table;
+}
+
+function calculateMeans() {
+    var numProcessors = parseInt(document.getElementById("numProcessors").value);
+    var numBenchmarks = parseInt(document.getElementById("numBenchmarks").value);
+    var processors = [];
+    var benchmarks = [];
+    var times = [];
+    var speedMetrics = [];
+    var referenceProcessor = parseInt(document.getElementById("referenceProcessor").value);
+
+    // Getting processor names
+    for (let i = 0; i < numProcessors; i++) {
+        let processorName = document.getElementById("processor" + i).value;
+        processors.push(processorName);
+    }
+
+    // Getting benchmark names
+    for (let j = 0; j < numBenchmarks; j++) {
+        let benchmarkName = document.getElementById("benchmark" + j).value;
+        benchmarks.push(benchmarkName);
+    }
+
+    // Getting execution times for each benchmark on each processor
+    for (let i = 0; i < numProcessors; i++) {
+        times[i] = [];
+        for (let j = 0; j < numBenchmarks; j++) {
+            let time = parseFloat(document.getElementById("time" + i + "_" + j).value);
+            times[i].push(time);
+        }
+    }
+
+    // Calculating speed metrics for each benchmark
+    for (let j = 0; j < numBenchmarks; j++) {
+        speedMetrics[j] = [];
+        for (let i = 0; i < numProcessors; i++) {
+            let speed = times[referenceProcessor][j] / times[i][j];
+            speedMetrics[j].push(speed);
+        }
+    }
+
+    // Calculating arithmetic and geometric means
+    var arithmeticMeans = [];
+    var geometricMeans = [];
+
+    for (let i = 0; i < numProcessors; i++) {
+        let arithmeticSum = 0;
+        let geometricProduct = 1;
+
+        for (let j = 0; j < numBenchmarks; j++) {
+            arithmeticSum += speedMetrics[j][i];
+            geometricProduct *= speedMetrics[j][i];
         }
 
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 20px;
-            color: #76ff03;
-            text-shadow: 2px 2px #00c853;
+        arithmeticMeans.push(arithmeticSum / numBenchmarks);
+        geometricMeans.push(Math.pow(geometricProduct, 1 / numBenchmarks));
+    }
+
+    // Displaying the results
+    var result = "<h3>Speed Metrics:</h3><table border='1'><tr><th>Benchmark</th>";
+
+    for (let i = 0; i < numProcessors; i++) {
+        result += "<th>" + processors[i] + "</th>";
+    }
+    result += "</tr>";
+
+    for (let j = 0; j < numBenchmarks; j++) {
+        result += "<tr><td>" + benchmarks[j] + "</td>";
+        for (let i = 0; i < numProcessors; i++) {
+            result += "<td>" + speedMetrics[j][i].toFixed(3) + "</td>";
         }
+        result += "</tr>";
+    }
 
-        label, input, select, button {
-            font-size: 1rem;
-        }
+    result += "</table><br><h3>Arithmetic Mean</h3><table border='1'><tr><th>Processor</th><th>Arithmetic Mean</th></tr>";
 
-        input[type="number"], input[type="text"], select {
-            width: 100%;
-            max-width: 300px;
-            padding: 10px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 5px;
-            background-color: #1e1e1e;
-            color: #ffffff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
+    for (let i = 0; i < numProcessors; i++) {
+        result += "<tr><td>" + processors[i] + "</td><td>" + arithmeticMeans[i].toFixed(3) + "</td></tr>";
+    }
 
-        button {
-            padding: 10px 20px;
-            background-color: #76ff03;
-            color: #121212;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-        }
+    result += "</table><br><h3>Geometric Mean</h3><table border='1'><tr><th>Processor</th><th>Geometric Mean</th></tr>";
 
-        button:hover {
-            background-color: #00c853;
-        }
+    for (let i = 0; i < numProcessors; i++) {
+        result += "<tr><td>" + processors[i] + "</td><td>" + geometricMeans[i].toFixed(3) + "</td></tr>";
+    }
 
-        /* Table styling */
-        table {
-            width: 100%;
-            max-width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-            overflow-x: auto;
-            display: block;
-        }
+    result += "</table><br><h3>Ranking (Arithmetic Mean)</h3><ol>";
+    var arithmeticRanking = [...processors].sort((a, b) => arithmeticMeans[processors.indexOf(b)] - arithmeticMeans[processors.indexOf(a)]);
+    for (let i = 0; i < numProcessors; i++) {
+        result += "<li>" + arithmeticRanking[i] + "</li>";
+    }
+    result += "</ol><br><h3>Ranking (Geometric Mean)</h3><ol>";
+    var geometricRanking = [...processors].sort((a, b) => geometricMeans[processors.indexOf(b)] - geometricMeans[processors.indexOf(a)]);
+    for (let i = 0; i < numProcessors; i++) {
+        result += "<li>" + geometricRanking[i] + "</li>";
+    }
+    result += "</ol>";
 
-        th, td {
-            padding: 10px;
-            text-align: center;
-            border: 1px solid #3e3e3e;
-        }
-
-        th {
-            background-color: #1e1e1e;
-            color: #76ff03;
-        }
-
-        tr:nth-child(even) {
-            background-color: #2e2e2e;
-        }
-
-        /* Ensure tables scroll horizontally on small screens */
-        .table-wrapper {
-            overflow-x: auto;
-            width: 100%;
-        }
-
-        @media screen and (max-width: 600px) {
-            h1 {
-                font-size: 1.5rem;
-            }
-
-            label {
-                font-size: 1rem;
-            }
-
-            button {
-                font-size: 0.9rem;
-                padding: 8px 16px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <h1>CPU Performance Calculator</h1>
-    <label for="numProcessors">Number of Processors:</label>
-    <input type="number" id="numProcessors" name="numProcessors" min="1" required><br>
-
-    <label for="numBenchmarks">Number of Benchmarks:</label>
-    <input type="number" id="numBenchmarks" name="numBenchmarks" min="1" required><br>
-
-    <button onclick="generateTable()">Generate Table</button>
-
-    <div id="inputTable"></div>
-    <div id="output"></div>
-
-    <script>
-        function generateTable() {
-            var numProcessors = parseInt(document.getElementById("numProcessors").value);
-            var numBenchmarks = parseInt(document.getElementById("numBenchmarks").value);
-            var table = "<h3>Enter execution times for each processor and benchmark:</h3><div class='table-wrapper'><table border='1'><tr><th>Benchmark</th>";
-
-            // Create the table header for processor names
-            for (let i = 0; i < numProcessors; i++) {
-                table += "<th><input type='text' id='processor" + i + "' placeholder='Processor " + (i + 1) + "'></th>";
-            }
-            table += "</tr>";
-
-            // Create rows for benchmark names and execution times
-            for (let j = 0; j < numBenchmarks; j++) {
-                table += "<tr><td><input type='text' id='benchmark" + j + "' placeholder='Benchmark " + (j + 1) + "'></td>";
-                for (let i = 0; i < numProcessors; i++) {
-                    table += "<td><input type='number' id='time" + i + "_" + j + "' placeholder='Time (sec)'></td>";
-                }
-                table += "</tr>";
-            }
-
-            table += "</table></div><br><label for='referenceProcessor'>Reference Processor:</label> <select id='referenceProcessor'>";
-            for (let i = 0; i < numProcessors; i++) {
-                table += "<option value='" + i + "'>Processor " + (i + 1) + "</option>";
-            }
-            table += "</select><br><br><button onclick='calculateMeans()'>Calculate</button>";
-
-            document.getElementById("inputTable").innerHTML = table;
-        }
-
-        // Rest of the JavaScript logic...
-    </script>
-</body>
-</html>
+    document.getElementById("output").innerHTML = result;
+}
