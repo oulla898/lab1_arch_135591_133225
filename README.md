@@ -1,7 +1,15 @@
 # CPU Performance Calculator
 
-## Introduction
+## Direct Link to the Calculator
 
+**[Click here to use the CPU Performance Calculator](https://oulla898.github.io/lab1_arch_135591_133225/cpu_performance_calculator.html)**
+
+Or paste this link into your browser:  
+**https://oulla898.github.io/lab1_arch_135591_133225/cpu_performance_calculator.html**
+
+---
+
+## Introduction
 This lab project aims to compare the performance of several CPUs using different benchmarks. It addresses the challenge of comparing CPU performances across various benchmarks by utilizing both arithmetic and geometric means of speed metrics. This approach provides a more accurate representation of performance, especially when dealing with outliers or extreme values.
 
 ## Features
