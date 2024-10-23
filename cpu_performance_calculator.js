@@ -1,3 +1,16 @@
+/*
+almaala Talal 135591
+abdulmunim    133225
+This code creates a dynamic table where users can input execution times for different processors and benchmarks.
+
+1. **generateTable**: Builds a table based on the number of processors and benchmarks entered by the user. It also provides input fields for execution times, and a dropdown to select a reference processor. Finally, it adds a button to trigger calculations.
+
+2. **calculateMeans**: After the user fills in the table, this function:
+   - Retrieves the entered data.
+   - Computes speed metrics by comparing each processor's execution time with the reference processor.
+   - Calculates the arithmetic and geometric means of the speed metrics for each processor.
+   - Displays the results, including the ranking of processors based on their means.*/
+
 
 function generateTable() {
     var numProcessors = parseInt(document.getElementById("numProcessors").value);
